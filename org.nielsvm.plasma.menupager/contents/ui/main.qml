@@ -6,14 +6,14 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.1
 
-import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components 3.0 as Components
-import org.kde.plasma.extras 2.0 as PlasmaExtras
-import org.kde.kquickcontrolsaddons 2.0 as KQuickControlsAddonsComponents
 import org.kde.draganddrop 2.0
-import org.kde.plasma.private.pager 2.0
 import org.kde.kirigami 2.20 as Kirigami
+import org.kde.kquickcontrolsaddons 2.0 as KQuickControlsAddonsComponents
+import org.kde.plasma.plasmoid 2.0
+import org.kde.plasma.components 3.0 as Components
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.extras 2.0 as PlasmaExtras
+import org.kde.plasma.private.pager 2.0
 
 import org.kde.kcmutils as KCM
 import org.kde.config as KConfig
@@ -27,15 +27,25 @@ PlasmoidItem {
 
     function getCurrentDesktopName() {
         if (!plasmoid.configuration.displayedLabel) {
+            // Display only index
             return pagerModel.currentPage+1;
         }
-        var page = pagerModel.currentPage;
+
         if (!pagerModel.hasIndex(pagerModel.currentPage, 0)) {
             // When no index yet exists, it seems not possible to create it
             // with createIndex() and thus we return a fixed string as
             // temporary workaround.
             return i18n("Virtual Desktop");
         }
+
+        if (plasmoid.configuration.displayedLabel === 2) {
+            // Display index + Name
+            var desktopIndex = pagerModel.currentPage+1;
+            var desktopName = pagerModel.data(pagerModel.index(pagerModel.currentPage, 0), 0);
+            return i18n("%1 - %2", desktopIndex, desktopName);
+        }
+
+        // Display only name
         return pagerModel.data(pagerModel.index(pagerModel.currentPage, 0), 0);
     }
 
